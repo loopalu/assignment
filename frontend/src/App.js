@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './App.css';
 
 function App() {
   const [sectors, setSectors] = useState([]);
@@ -70,29 +71,51 @@ function App() {
     };
 
   return (
-      <form onSubmit={handleSubmit}>
-        <p>Please enter your name and pick the Sectors you are currently involved in.</p>
-        <label>
-          Name:
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        </label>
-        <br /><br />
-        <label>
-          Sectors:
-          <select multiple size="5" value={selectedSectors} onChange={handleSectorChange}>
-            {renderOptions(sectors)}
-          </select>
-        </label>
-        <br /><br />
-        <label>
-          <input
-              type="checkbox"
-              checked={agreeToTerms}
-              onChange={(e) => setAgreeToTerms(e.target.checked)}
-          /> Agree to terms
-        </label>
-        <br /><br />
-        <input type="submit" value="Save" />
+      <form onSubmit={handleSubmit} className="form-container">
+          <p>Please enter your name and pick the Sectors you are currently involved in.</p>
+          <div className="form-group">
+              <label htmlFor="name">Name:</label>
+              <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="form-control"
+              />
+          </div>
+
+          <div className="form-group">
+              <label htmlFor="sectors">Sectors:</label>
+              <select
+                  multiple
+                  size="5"
+                  id="sectors"
+                  value={selectedSectors}
+                  onChange={handleSectorChange}
+                  className="form-control"
+              >
+                  {renderOptions(sectors)}
+              </select>
+          </div>
+
+          <div className="terms-group">
+              <div>
+                  <label htmlFor="terms" className="terms-label">Agree to terms</label>
+              </div>
+              <div>
+                  <input
+                      type="checkbox"
+                      id="terms"
+                      checked={agreeToTerms}
+                      onChange={(e) => setAgreeToTerms(e.target.checked)}
+                      className="terms-checkbox"
+                  />
+              </div>
+          </div>
+
+          <div className="form-group">
+              <input type="submit" value="Save" className="btn btn-primary" />
+          </div>
       </form>
   );
 }
