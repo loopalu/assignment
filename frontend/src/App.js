@@ -6,8 +6,9 @@ function App() {
   const [name, setName] = useState('');
   const [selectedSectors, setSelectedSectors] = useState([]);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [validationMessage, setValidationMessage] = useState('');
 
-    useEffect(() => {
+  useEffect(() => {
         fetch('http://localhost:8080/sector')
             .then(response => {
                 if (!response.ok) {
@@ -27,15 +28,45 @@ function App() {
             });
     }, []);
 
+    const validateForm = () => {
+        const nameRegex = /^[a-zA-ZõäöüÕÄÖÜ]+(([',. -][a-zA-ZõäöüÕÄÖÜ ])?[a-zA-ZõäöüÕÄÖÜ]*)*$/;
+        if (!nameRegex.test(name) || name.trim().length === 0) {
+            return 'Please fill in the name field with a valid name.';
+        }
+
+        if (name.trim().length > 70) {
+            return 'A name can\'t be that long. Please set a correct name.';
+        }
+
+        if (selectedSectors.length === 0) {
+            return 'Please select at least one sector from the dropdown list.';
+        }
+
+        if (!agreedToTerms) {
+            return 'You must agree to the terms.';
+        }
+
+        // If all validations pass
+        return '';
+    };
+
   const handleSectorChange = (event) => {
     const values = Array.from(event.target.selectedOptions, option => option.value);
     setSelectedSectors(values);
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+      event.preventDefault();
 
-    const formData = {
+      const message = validateForm();
+      if (message !== '') {
+        setValidationMessage(message);
+        return; // Prevent form submission
+      }
+      // Reset validation message if validation passes
+      setValidationMessage('');
+
+      const formData = {
       name,
       selectedSectors,
       agreedToTerms
@@ -84,7 +115,6 @@ function App() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="form-control"
               />
           </div>
 
@@ -96,7 +126,6 @@ function App() {
                   id="sectors"
                   value={selectedSectors}
                   onChange={handleSectorChange}
-                  className="form-control"
               >
                   {renderOptions(sectors)}
               </select>
@@ -118,8 +147,12 @@ function App() {
           </div>
 
           <div className="form-group">
-              <input type="submit" value="Save" className="btn btn-primary" />
+              <input type="submit" value="Save" />
           </div>
+
+          {validationMessage && <div className="alert-danger" role="alert">
+              {validationMessage}
+          </div>}
       </form>
   );
 }
