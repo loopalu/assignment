@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [sectors, setSectors] = useState([]);
-  const [name, setName] = useState('');
-  const [selectedSectors, setSelectedSectors] = useState([]);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [validationMessage, setValidationMessage] = useState('');
+    const [sectors, setSectors] = useState([]);
+    const [name, setName] = useState(() => sessionStorage.getItem('name') || '');
+    const [selectedSectors, setSelectedSectors] = useState(() => JSON.parse(sessionStorage.getItem('selectedSectors')) || []);
+    const [agreedToTerms, setAgreedToTerms] = useState(() => sessionStorage.getItem('agreedToTerms') === 'true');
+    const [validationMessage, setValidationMessage] = useState('');
 
   useEffect(() => {
-        fetch('http://localhost:8080/sector')
+      sessionStorage.setItem('name', name);
+      sessionStorage.setItem('selectedSectors', JSON.stringify(selectedSectors));
+      sessionStorage.setItem('agreedToTerms', agreedToTerms.toString());
+
+      fetch('http://localhost:8080/sector')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -26,33 +30,44 @@ function App() {
             .catch(error => {
                 console.error('Error fetching sectors:', error);
             });
-    }, []);
+      }, []);
 
-    const validateForm = () => {
-        const nameRegex = /^[a-zA-ZõäöüÕÄÖÜ]+(([',. -][a-zA-ZõäöüÕÄÖÜ ])?[a-zA-ZõäöüÕÄÖÜ]*)*$/;
-        if (!nameRegex.test(name) || name.trim().length === 0) {
-            return 'Please fill in the name field with a valid name.';
-        }
+  const validateForm = () => {
+      const nameRegex = /^[a-zA-ZõäöüÕÄÖÜ]+(([',. -][a-zA-ZõäöüÕÄÖÜ ])?[a-zA-ZõäöüÕÄÖÜ]*)*$/;
+      if (!nameRegex.test(name) || name.trim().length === 0) {
+          return 'Please fill in the name field with a valid name.';
+      }
 
-        if (name.trim().length > 70) {
-            return 'A name can\'t be that long. Please set a correct name.';
-        }
+      if (name.trim().length > 70) {
+          return 'A name can\'t be that long. Please set a correct name.';
+      }
 
-        if (selectedSectors.length === 0) {
-            return 'Please select at least one sector from the dropdown list.';
-        }
+      if (selectedSectors.length === 0) {
+          return 'Please select at least one sector from the dropdown list.';
+      }
 
-        if (!agreedToTerms) {
-            return 'You must agree to the terms.';
-        }
+      if (!agreedToTerms) {
+          return 'You must agree to the terms.';
+      }
 
-        // If all validations pass
-        return '';
+      // If all validations pass then set no validation message
+      return '';
     };
 
+  const handleCheckBoxEvent = (event) => {
+      setAgreedToTerms(event.target.checked);
+      sessionStorage.setItem('agreedToTerms', event.target.checked.toString());
+  };
+
+  const handleNameBoxEvent = (event) => {
+      setName(event.target.value);
+      sessionStorage.setItem('name', event.target.value);
+  };
+
   const handleSectorChange = (event) => {
-    const values = Array.from(event.target.selectedOptions, option => option.value);
-    setSelectedSectors(values);
+      const values = Array.from(event.target.selectedOptions, option => option.value);
+      setSelectedSectors(values);
+      sessionStorage.setItem('selectedSectors', JSON.stringify(values));
   };
 
   const handleSubmit = (event) => {
@@ -90,6 +105,10 @@ function App() {
         .catch((error) => {
           console.error('Error:', error);
         });
+
+      sessionStorage.setItem('name', name);
+      sessionStorage.setItem('selectedSectors', JSON.stringify(selectedSectors));
+      sessionStorage.setItem('agreedToTerms', agreedToTerms.toString());
   };
 
     const renderOptions = (sectors, parentId = null, level = 0) => {
@@ -114,7 +133,7 @@ function App() {
                   type="text"
                   id="name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={handleNameBoxEvent}
               />
           </div>
 
@@ -140,7 +159,7 @@ function App() {
                       type="checkbox"
                       id="terms"
                       checked={agreedToTerms}
-                      onChange={(e) => setAgreedToTerms(e.target.checked)}
+                      onChange={handleCheckBoxEvent}
                       className="terms-checkbox"
                   />
               </div>
