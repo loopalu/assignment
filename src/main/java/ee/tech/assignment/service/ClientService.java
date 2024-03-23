@@ -8,6 +8,8 @@ import ee.tech.assignment.model.ClientSector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ClientService {
 
@@ -17,7 +19,7 @@ public class ClientService {
     @Autowired
     ClientSectorDao clientSectorDao;
 
-    public void saveOrUpdateClientSelections(ClientDto clientDto) {
+    public ClientDto saveOrUpdateClientSelections(ClientDto clientDto) {
         Client client = clientDao.findByName(clientDto);
 
         clientSectorDao.deleteByClientId(client.getId());
@@ -27,5 +29,13 @@ public class ClientService {
             clientSector.setSectorId(Long.parseLong(sectorId));
             clientSectorDao.save(clientSector);
         }
+
+        ClientDto newClientDto = new ClientDto();
+        newClientDto.setName(client.getName());
+        newClientDto.setAgreedToTerms(client.isAgreedToTerms());
+
+        List<String> selectedSectors = clientSectorDao.getClientSectorsByClientId(client.getId());
+        newClientDto.setSelectedSectors(selectedSectors);
+        return newClientDto;
     }
 }

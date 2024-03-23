@@ -17,7 +17,6 @@ public class ClientController {
 
     @PostMapping("")
     public ClientDto saveOrUpdateClientSelections(@RequestBody ClientDto clientDto) {
-        clientService.saveOrUpdateClientSelections(clientDto);
-        return clientDto;
+        return clientService.saveOrUpdateClientSelections(clientDto);
     }
 }
