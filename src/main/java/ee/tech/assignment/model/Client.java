@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "client")
+public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
-    @SequenceGenerator(name = "user_id_seq", sequenceName = "seq_user", allocationSize = 1)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "client_id_generator")
+    @SequenceGenerator(name = "client_id_generator", sequenceName = "seq_client", allocationSize = 1)
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 70)
     private String name;

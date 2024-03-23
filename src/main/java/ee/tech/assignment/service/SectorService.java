@@ -18,10 +18,7 @@ public class SectorService {
     public List<SectorDto> getAllSectors() {
         List<Sector> sectors = sectorDao.getAllSectors();
         return sectors.stream()
-                .map(sector -> {
-                    Integer parentId = sector.getParent() != null ? sector.getParent().getId() : null;
-                    return new SectorDto(sector.getId(), sector.getSectorName(), parentId);
-                })
+                .map(sector -> new SectorDto(sector.getId(), sector.getSectorName(), sector.getParentId()))
                 .collect(Collectors.toList());
     }
 }

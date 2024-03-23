@@ -1,11 +1,11 @@
 -- Create sequences for generating unique identifiers
-CREATE SEQUENCE IF NOT EXISTS seq_user START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS seq_client START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE IF NOT EXISTS seq_sector START WITH 1 INCREMENT BY 1;
-CREATE SEQUENCE IF NOT EXISTS seq_usersector START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS seq_clientsector START WITH 1 INCREMENT BY 1;
 
--- Create the user table
-CREATE TABLE IF NOT EXISTS "user" (
-    "id" INT NOT NULL DEFAULT nextval('seq_user'),
+-- Create the client table
+CREATE TABLE IF NOT EXISTS "client" (
+    "id" BIGINT NOT NULL DEFAULT nextval('seq_client'),
     "name" VARCHAR(70) NOT NULL,
     "agreedtoterms" BOOLEAN NOT NULL,
     PRIMARY KEY ("id")
@@ -13,31 +13,31 @@ CREATE TABLE IF NOT EXISTS "user" (
 
 -- Create the sector table
 CREATE TABLE IF NOT EXISTS "sector" (
-    "id" INT NOT NULL DEFAULT nextval('seq_sector'),
+    "id" BIGINT NOT NULL DEFAULT nextval('seq_sector'),
     "sectorname" VARCHAR(100) NOT NULL,
-    "parentid" INT REFERENCES sector(id),
+    "parentid" BIGINT REFERENCES sector(id),
     PRIMARY KEY ("id")
 );
 
--- Create the usersector table
-CREATE TABLE IF NOT EXISTS "usersector" (
-    "id" INT NOT NULL DEFAULT nextval('seq_usersector'),
-    "userid" INT NOT NULL,
-    "sectorid" INT NOT NULL,
+-- Create the clientsector table
+CREATE TABLE IF NOT EXISTS "clientsector" (
+    "id" BIGINT NOT NULL DEFAULT nextval('seq_clientsector'),
+    "clientid" BIGINT NOT NULL,
+    "sectorid" BIGINT NOT NULL,
     "selected" BOOLEAN NOT NULL,
     PRIMARY KEY ("id"),
-    FOREIGN KEY ("userid") REFERENCES "user" ("id"),
+    FOREIGN KEY ("clientid") REFERENCES "client" ("id"),
     FOREIGN KEY ("sectorid") REFERENCES "sector" ("id")
 );
 
--- Create indexes on usersector for userid and sectorid
-CREATE INDEX IF NOT EXISTS "idx_usersector_userid" ON "usersector" ("userid");
-CREATE INDEX IF NOT EXISTS "idx_usersector_sectorid" ON "usersector" ("sectorid");
-CREATE INDEX IF NOT EXISTS "idx_usersector_selected" ON "usersector" ("selected");
+-- Create indexes on clientsector for clientid and sectorid
+CREATE INDEX IF NOT EXISTS "idx_clientsector_clientid" ON "clientsector" ("clientid");
+CREATE INDEX IF NOT EXISTS "idx_clientsector_sectorid" ON "clientsector" ("sectorid");
+CREATE INDEX IF NOT EXISTS "idx_clientsector_selected" ON "clientsector" ("selected");
 
--- Add indexes to user table
-CREATE INDEX IF NOT EXISTS "idx_user_name" ON "user" ("name");
-CREATE INDEX IF NOT EXISTS "idx_user_agreedtoterms" ON "user" ("agreedtoterms");
+-- Add indexes to client table
+CREATE INDEX IF NOT EXISTS "idx_client_name" ON "client" ("name");
+CREATE INDEX IF NOT EXISTS "idx_client_agreedtoterms" ON "client" ("agreedtoterms");
 
 -- Add index to sector table
 CREATE INDEX IF NOT EXISTS "idx_sector_sectorname" ON "sector" ("sectorname");

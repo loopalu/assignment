@@ -20,5 +20,4 @@ public class SectorController {
     public List<SectorDto> getAllSectors() {
         return sectorService.getAllSectors();
     }
-
 }

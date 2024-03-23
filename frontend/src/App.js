@@ -5,7 +5,7 @@ function App() {
   const [sectors, setSectors] = useState([]);
   const [name, setName] = useState('');
   const [selectedSectors, setSelectedSectors] = useState([]);
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:8080/sector')
@@ -38,10 +38,10 @@ function App() {
     const formData = {
       name,
       selectedSectors,
-      agreeToTerms
+      agreedToTerms
     };
 
-    fetch('http://localhost:8080/user', {
+    fetch('http://localhost:8080/client', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -106,8 +106,8 @@ function App() {
                   <input
                       type="checkbox"
                       id="terms"
-                      checked={agreeToTerms}
-                      onChange={(e) => setAgreeToTerms(e.target.checked)}
+                      checked={agreedToTerms}
+                      onChange={(e) => setAgreedToTerms(e.target.checked)}
                       className="terms-checkbox"
                   />
               </div>
