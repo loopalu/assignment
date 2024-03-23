@@ -21,6 +21,7 @@ frontend/coverage
 
 # production
 frontend/build
+frontend/.gradle
 
 # misc
 frontend/.DS_Store
