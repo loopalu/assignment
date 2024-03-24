@@ -36,4 +36,41 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	include '**/ee/tech/assignment/**/*Test.class'
+	exclude '**/ee/tech/assignment/integration/**'
+
+	outputs.upToDateWhen { false }
+
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println "\nUnit Test result: ${result.resultType}"
+			println "Unit Test summary: ${result.testCount} tests, " +
+					"${result.successfulTestCount} succeeded, " +
+					"${result.failedTestCount} failed, " +
+					"${result.skippedTestCount} skipped"
+		}
+	}
+}
+
+task integrationTest(type: Test) {
+	useJUnitPlatform()
+
+	include '**/ee/tech/assignment/integration/**/*Test.class'
+
+	outputs.upToDateWhen { false }
+
+	doFirst {
+		println 'Ensure the application is running before executing E2E tests'
+	}
+
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println "\nTest result: ${result.resultType}"
+			println "Test summary: ${result.testCount} tests, " +
+					"${result.successfulTestCount} succeeded, " +
+					"${result.failedTestCount} failed, " +
+					"${result.skippedTestCount} skipped"
+		}
+	}
 }
